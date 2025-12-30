@@ -7,8 +7,7 @@ I used to think I needed to know exactly what I was making before I started. Pla
 
 But the things I'm proudest of didn't happen that way. They emerged from building the same thing multiple times, each version teaching me something I couldn't have known at the start.
 
-The thing I got wrong was thinking coherence comes from planning. It doesn't. It comes from iteration.  
-I didn't design my way to the solution. I discovered it.
+The thing I got wrong was thinking coherence comes from planning. It doesn't. It&nbsp;comes&nbsp;from iteration. I&nbsp;didn't design my way to the solution. I&nbsp;discovered&nbsp;it.
 
 The best way I can describe how this works is like entering a dark room. My first instinct is to turn on a Lamp. This gives me a broad view—I can see the general layout, where things are, what I'm dealing with. In this step everything is visible but nothing is clear yet.
 

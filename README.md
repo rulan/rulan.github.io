@@ -1,5 +1,5 @@
 # Data for my personal site
-It is automatically transformed by [Jekyll](http://github.com/mojombo/jekyll) into a [static site](https://rulan.github.io) whenever I push to the `main` branch using a Github Action. No plugins are used.
+It is automatically transformed by [Jekyll](http://github.com/mojombo/jekyll) into a [static site](https://rulan.github.io) whenever I push to the `main` branch using a Github Action.
 
 # Run locally
 Requires Ruby >= 3.2
@@ -13,4 +13,7 @@ Preview locally:
 
 # License
 
-The content and design are copyrighted by me and may not be used without permission.
+© 2025 Raul Arenas. All Rights Reserved. The content and design are copyrighted by me and may not be used without permission. 
+
+
+

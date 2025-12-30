@@ -1,0 +1,7 @@
+entries:
+
+  - title: rss
+    url: feed.xml
+  
+  - title: about
+    url: about

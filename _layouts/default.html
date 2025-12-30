@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include head.html %}
+</head>
+<body>
+
+{% unless page.layout == "post" %}
+{% include header.html %}
+{% endunless %}
+
+<div class="layout">
+    <main class="content">
+        {{ content }}
+    </main>
+</div>
+
+{% include footer.html %}
+{% if jekyll.environment == "production" %}
+    {% include goat_counter.html %}
+{% endif %}
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+<article class="post-list-item">
+    <h1 class="post-title">
+        <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+    </h1>
+    <time class="post-date">
+        {{ post.date | date: "%B %-d, %Y" }}
+    </time>
+</article>

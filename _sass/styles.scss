@@ -1,0 +1,422 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  text-underline-offset: 3px;
+}
+
+@font-face {
+  font-family: 'Marist';
+  src: url('../fonts/ABCMarist-Book.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/Inter-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/Inter-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/Inter-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/Inter-Italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  line-height: 1.5;
+  tab-size: 4;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  background: white;
+  min-height: 100vh;
+  padding: 2rem;
+  color: #171717;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+h1, h2, h3, h4, h5 {
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+p {
+  margin: 1rem 0;
+  color: #171717;
+}
+
+// ------------------- GLOBAL LINKS ------------------- //
+a {
+  text-decoration: underline;
+  color: inherit;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+a.site-title {
+  text-decoration: none;
+}
+
+.site-title a {
+  text-decoration: none;
+}
+::selection {
+  color: #29c2a6;
+  background-color: #e9fef9
+}
+
+
+// ------------------- MEDIA DEFAULTS ------------------- //
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+img.post {
+  box-shadow: 9px 6px 0 rgba(0, 0, 0, .06);
+  border-radius: 3px;
+  height: auto;
+  max-width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+// ------------------- LAYOUT ------------------- //
+header,
+main,
+footer {
+  max-width: 360px;
+  margin: 0 0 2rem;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+
+/* Menu  */
+header nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 1rem;
+  font-size: 14px;
+}
+
+header nav ul li {
+  margin: 0;
+}
+
+header nav a {
+  text-decoration: underline;
+  text-decoration-color: #c7c7c7;
+  text-underline-offset: 3px;
+  color: #8f8f8f;
+}
+
+header nav a:hover {
+  text-decoration: none;
+}
+
+footer {
+  font-size: 14px;
+}
+
+p.footer {
+  color: #8f8f8f;
+}
+
+a.footer {
+  text-decoration-color: #c7c7c7;
+}
+
+// ------------------- POSTS ------------------- //
+
+/* Homepage post titles */
+article.post-full h1 {
+  font-family: Marist, serif;
+  font-size: 18px;
+  font-weight: 300;
+  margin-bottom: 8px;
+}
+
+article.post-full h1 a {
+  text-decoration: none;
+}
+
+article.post-full h1 a:hover {
+  color: #8f8f8f;
+  text-decoration: underline;
+  text-decoration-color: #c7c7c7;
+  text-decoration-thickness: 1px;
+}
+
+/* Post page title*/
+.post-title {
+  font-family: Marist, serif;
+  font-size: 18px;
+  font-weight: 300;
+  margin-bottom: 8px;
+}
+
+.post-title a {
+  text-decoration: none;
+}
+
+.post-title a:hover {
+  color: #8f8f8f;
+  text-decoration: underline;
+  text-decoration-color: #c7c7c7;
+  text-decoration-thickness: 1px;
+}
+/* --- Consistent spacing BETWEEN homepage posts --- */
+/* This applies only when posts follow each other */
+article.post-full + article.post-full {
+  margin-top: 4rem;
+}
+
+
+/* --- Pagination spacing only when it actually paginates --- */
+.pagination {
+  margin-top: 3rem; /* spacing when pagination has links */
+}
+
+/* If pagination is empty (no links), remove that spacing */
+.pagination.is-empty {
+  margin-top: 0;
+}
+
+/* Headings inside post */
+main h2 {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 1.5rem 0 0.75rem;
+}
+
+main h3 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 1.25rem 0 0.5rem;
+}
+
+article.post-full .post-date {
+  color: #8f8f8f;
+  font-size: 14px;
+  margin-top: -8px;
+}
+
+article.page {
+  margin-bottom: 0px;
+}
+
+article.page .page-title {
+  font-family: Marist, serif;
+  font-size: 18px;
+  font-weight: 300;
+  margin-bottom: 1rem;
+}
+
+
+// ------------------- MISC ------------------- //
+hr {
+  border: none;
+  margin: 2rem 0;
+  text-align: left;
+  font-style: italic;
+  color: #8f8f8f;
+
+  &:before { content: '━━' }
+  &:after { content: attr(data-content) '━━' }
+}
+
+blockquote {
+  border-left: 1px solid #c7c7c7;
+  padding-left: 1rem;
+  font-style: italic;
+  margin: 1.5rem 0;
+
+  p { margin: 0; }
+}
+
+code {
+  background: black;
+  color: white;
+  padding: 0.2rem 0.4rem;
+}
+
+div.highlighter-rouge code {
+  display: block;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+table, th, td {
+  width: 100%;
+  border: thin solid black;
+  border-collapse: collapse;
+  padding: 0.4rem;
+}
+
+div.pagination-inner {
+  display: flex;
+  justify-content: space-between;
+}
+
+a.older, a.newer {
+  text-decoration: underline;
+  text-decoration-color: #c7c7c7;
+  color: #8f8f8f;
+}
+
+a.older:hover, a.newer:hover {
+  text-decoration: none;
+}
+
+// Post back nav
+
+.post-nav {
+  margin-bottom: 2rem;
+}
+
+.post-nav a {
+  text-decoration: underline;
+  text-decoration-color: #c7c7c7;
+  color: #8f8f8f;
+}
+
+.post-nav a:hover {
+  text-decoration: none;
+}
+
+svg.circle {
+  filter: blur(8px);
+  position: absolute;
+  margin: -55px;
+  z-index: -1;
+}
+
+/* ---------------- TAGS ---------------- */
+
+.badge {
+  font-family: 'Inter';
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 12px;
+  border: 1px solid #d4d4d4;
+  border-radius: 999px;
+  text-decoration: none;
+  color: #171717;
+  background: transparent;
+  line-height: 1;
+}
+
+.badge:hover {
+  background: #f5f5f5;
+  border-color: #bcbcbc;
+}
+
+.badge:first-letter {
+  text-transform: capitalize;
+}
+
+// Tags list at top of pages
+.tags-list {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tags-list .badge {
+  margin-left: 0;
+}
+
+// Tags posts
+
+div.tags ul.posts {
+  margin-left: 16px;
+  text-decoration: none;
+
+}
+
+/* Archives list: remove bullet */
+.meta-page-list {
+  font-family: Marist;
+  font-size: 18px;
+  list-style: none;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+/* Archives year styling */
+.meta-page-list .meta-date {
+  font-family: Inter;
+  font-size: 14px;
+  color: #8f8f8f;
+  margin-right: 0.5rem;
+}
+// Figures and captions
+figure {
+  margin: 1rem 0;
+
+  img {
+    margin-bottom: 0.5rem;
+  }
+}
+
+figcaption {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: hsl(0deg 0% 56% / 50%);
+  margin-top: -0.5rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+
+  a {
+    color: #8f8f8f;
+    text-decoration: underline;
+    text-decoration-color: #c7c7c7;
+  }
+
+  a:hover {
+    text-decoration: none;
+  }
+}

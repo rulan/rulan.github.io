@@ -1,0 +1,31 @@
+<ul>
+  {% for item in include.collection %}
+
+    {% assign has_title = item.title %}
+    {% assign has_posts = item.post_list %}
+    {% assign has_children = item.entries %}
+
+    {% if has_title or has_posts or has_children %}
+      <li>
+
+        {% if has_title %}
+          {% if item.url != false %}
+            <a href="{{ item.url }}">{{ item.title }}</a>
+          {% else %}
+            {{ item.title }}
+          {% endif %}
+        {% endif %}
+
+        {% if has_posts %}
+          {% include post_list.html %}
+        {% endif %}
+
+        {% if has_children %}
+          {% include menu_item.html collection=item.entries %}
+        {% endif %}
+
+      </li>
+    {% endif %}
+
+  {% endfor %}
+</ul>

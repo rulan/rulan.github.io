@@ -13,7 +13,7 @@ The best way I can describe how this works is like entering a dark room. My firs
 
 As I look around, I start noticing areas that need attention. Dark corners. Details I can't quite make out. That's the first sign to build a flashlight. I have to build the solution for that specific problem I found. This lets me examine one area deeply. I can move it around. Point it at different spots. Try different angles. Learn what is actually there.
 
-I've worked on projects that stayed at this level. Using lamps to see broadly, maybe one flashlight to investigate something specific, then shipped. The result? Shallow product thinking.
+I've worked on projects that stayed at this level. Using lamps to see broadly, maybe one flashlight to investigate something specific, then shipped. The&nbsp;result? Shallow product thinking.
 
 But when you take the time to build enough flashlights and start moving them around, making mistakes and rebuilding them—you start seeing patterns. This corner needs attention. That corner too. These three things relate to each other. The flashlights show you what's real.
 

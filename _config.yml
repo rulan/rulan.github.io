@@ -5,9 +5,9 @@ url: https://raularenas.com
 description: >
   Designing products that feel natural and last.
 
-permalink: /:slug.html  # or change to /:slug/ if you prefer folder-style URLs
+permalink: /:slug.html # or change to /:slug/ if you prefer folder-style URLs
 
-favicon: "./favicon.ico"   # relative path to site's favicon
+favicon: "./favicon.ico" # relative path to site's favicon
 
 # Pagination (must be top-level)
 paginate: 2
@@ -16,17 +16,14 @@ paginate_path: "page:num"
 # Analytics
 goat_counter: rulan
 
-
 theme_config:
-  appearance: "light"         # light/dark/auto
+  appearance: "light" # light/dark/auto
   back_home_text: ".."
   date_format: "%Y-%m-%d"
   show_description: true
 
-
-
 sass:
-  style: :compressed
+  style: compressed
 
 plugins:
   - jekyll-feed

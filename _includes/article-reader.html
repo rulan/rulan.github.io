@@ -186,7 +186,13 @@
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
             >
-                <path d="M3 2L11 7L3 12V2Z" fill="currentColor" />
+                <path
+                    d="M4 2.5L11.5 7L4 11.5V2.5Z"
+                    fill="currentColor"
+                    stroke="currentColor"
+                    stroke-width="0.3"
+                    stroke-linejoin="round"
+                />
             </svg>
         </button>
         <div class="article-reader-info">
@@ -348,8 +354,8 @@
 
                 playIcon.innerHTML = `
                     <g fill="currentColor">
-                        <rect x="4" y="2" width="2" height="10" rx="1"/>
-                        <rect x="8" y="2" width="2" height="10" rx="1"/>
+                        <rect x="4" y="2" width="2" height="10" rx="0.5"/>
+                        <rect x="8" y="2" width="2" height="10" rx="0.5"/>
                     </g>
                 `;
                 label.style.display = "none";
@@ -375,7 +381,7 @@
                     playIcon = svg;
                 }
 
-                playIcon.innerHTML = `<path d="M3 2L11 7L3 12V2Z" fill="currentColor"/>`;
+                playIcon.innerHTML = `<path d="M4 2.5L11.5 7L4 11.5V2.5Z" fill="currentColor" stroke="currentColor" stroke-width="0.3" stroke-linejoin="round"/>`;
                 label.style.display = "none";
                 separator.style.display = "none";
                 timeDisplay.textContent = "Paused";
@@ -399,7 +405,7 @@
                     playIcon = svg;
                 }
 
-                playIcon.innerHTML = `<path d="M3 2L11 7L3 12V2Z" fill="currentColor"/>`;
+                playIcon.innerHTML = `<path d="M4 2.5L11.5 7L4 11.5V2.5Z" fill="currentColor" stroke="currentColor" stroke-width="0.3" stroke-linejoin="round"/>`;
                 label.textContent = "Listen";
                 label.style.display = "";
                 separator.style.display = "";

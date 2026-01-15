@@ -1,0 +1,628 @@
+<style>
+    .article-reader {
+        margin: 0 0 0;
+        padding: 0;
+    }
+
+    .article-reader-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        cursor: pointer;
+        user-select: none; /* Prevent text selection on click */
+        padding: 4px;
+        margin: -4px;
+        border-radius: 8px;
+        transition: background-color 0.2s ease;
+    }
+
+    .article-reader-controls:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    .article-reader-controls:active {
+        background-color: rgba(0, 0, 0, 0.04);
+    }
+
+    .article-reader-controls:active {
+        background-color: rgba(0, 0, 0, 0.04);
+    }
+
+    /* Disable pointer when button is not supported or disabled (but not loading)
+    important UX improvement !!
+    */
+
+    .article-reader-btn.not-supported ~ .article-reader-info {
+        cursor: not-allowed;
+    }
+
+    .article-reader-btn:disabled:not(.loading) ~ .article-reader-info {
+        cursor: not-allowed;
+    }
+
+    .article-reader-controls:has(.article-reader-btn.not-supported),
+    .article-reader-controls:has(.article-reader-btn:disabled:not(.loading)) {
+        cursor: not-allowed;
+    }
+
+    .article-reader-controls:has(.article-reader-btn.not-supported):hover,
+    .article-reader-controls:has(.article-reader-btn.not-supported):active,
+    .article-reader-controls:has(
+            .article-reader-btn:disabled:not(.loading)
+        ):hover,
+    .article-reader-controls:has(
+            .article-reader-btn:disabled:not(.loading)
+        ):active {
+        background-color: transparent;
+    }
+
+    /* Keep loading state interactive-looking */
+    .article-reader-controls:has(.article-reader-btn.loading) {
+        cursor: pointer;
+    }
+
+    .article-reader-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: transparent;
+        border: 1px solid #d4d4d4;
+        border-radius: 50%;
+        padding: 0;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .article-reader-btn:hover:not(:disabled) {
+        border-color: #29c2a6;
+        background: rgba(41, 194, 166, 0.05);
+    }
+
+    .article-reader-btn.playing {
+        border-color: #29c2a6;
+        background: rgba(41, 194, 166, 0.1);
+    }
+
+    .article-reader-btn.not-supported {
+        opacity: 0.5;
+        cursor: not-allowed;
+        border-color: #e5e5e5;
+    }
+
+    .article-reader-btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+
+    /* Loading state - keep interactive appearance */
+    .article-reader-btn.loading {
+        cursor: pointer;
+        opacity: 1;
+    }
+
+    .article-reader-btn svg {
+        width: 14px;
+        height: 14px;
+        color: #171717;
+        transition: color 0.2s ease;
+    }
+
+    .article-reader-btn.playing svg {
+        color: #29c2a6;
+    }
+
+    /* Spinning loader - enhanced visibility */
+    .spinner-loader {
+        width: 16px;
+        height: 16px;
+        border: 2px solid #e5e5e5;
+        border-top-color: #171717;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        display: block;
+        flex-shrink: 0;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Ensure spinner is visible when loading */
+    .article-reader-btn.loading {
+        border-color: #d4d4d4;
+    }
+
+    .article-reader-btn.loading .spinner-loader {
+        border-top-color: #171717;
+    }
+
+    .article-reader-info {
+        font-family: "Inter", sans-serif;
+        font-size: 14px;
+        color: #171717;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .article-reader-label {
+        color: #171717;
+    }
+
+    .article-reader-separator {
+        color: #8f8f8f;
+    }
+
+    .article-reader-time {
+        color: #8f8f8f;
+    }
+
+    .article-reader-btn.playing + .article-reader-info .article-reader-label,
+    .article-reader-btn.playing + .article-reader-info .article-reader-time {
+        color: #29c2a6;
+    }
+</style>
+
+<div class="article-reader" id="articleReader">
+    <div class="article-reader-controls">
+        <button
+            class="article-reader-btn"
+            id="readerBtn"
+            aria-label="Read article aloud"
+        >
+            <svg
+                id="playIcon"
+                width="14"
+                height="14"
+                viewBox="0 0 14 14"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+                <path d="M3 2L11 7L3 12V2Z" fill="currentColor" />
+            </svg>
+        </button>
+        <div class="article-reader-info">
+            <span class="article-reader-label" id="readerLabel">Listen</span>
+            <span class="article-reader-separator">•</span>
+            <span class="article-reader-time" id="readerTime">Loading...</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        "use strict";
+
+        // Check browser support
+        const isSupported = "speechSynthesis" in window;
+
+        // DOM elements
+        const controls = document.querySelector(".article-reader-controls");
+        const btn = document.getElementById("readerBtn");
+        let playIcon = document.getElementById("playIcon"); // Use 'let' since we'll replace it
+        const label = document.getElementById("readerLabel");
+        const separator = document.querySelector(".article-reader-separator");
+        const timeDisplay = document.getElementById("readerTime");
+
+        // State
+        let utterance = null;
+        let isPlaying = false;
+        let isPaused = false;
+        let isFirstPlay = true;
+        let isInitializing = false;
+        let articleText = "";
+        let estimatedMinutes = 0;
+
+        // Hide if not supported
+        if (!isSupported) {
+            btn.classList.add("not-supported");
+            label.textContent = "Not supported";
+            timeDisplay.textContent = "";
+            btn.disabled = true;
+            return;
+        }
+
+        /**
+         * Extract clean text from article - with fallback selectors
+         */
+        function extractArticleText() {
+            // Try multiple selectors in order of preference
+            const selectors = [
+                "article.post-full",
+                "article.post",
+                "article",
+                "main",
+            ];
+
+            let article = null;
+            let usedSelector = "";
+
+            for (const selector of selectors) {
+                article = document.querySelector(selector);
+                if (article) {
+                    usedSelector = selector;
+                    console.log(`✓ Found article using: "${selector}"`);
+                    break;
+                }
+            }
+
+            if (!article) {
+                console.error("✗ No article element found");
+                return "";
+            }
+
+            const clone = article.cloneNode(true);
+
+            const skipSelectors = [
+                "h1",
+                ".post-title",
+                ".post-date",
+                ".post-meta",
+                "nav",
+                "code",
+                "pre",
+                "figure",
+                ".article-reader",
+                "script",
+                "style",
+                "header",
+                "footer",
+            ];
+
+            skipSelectors.forEach((selector) => {
+                clone.querySelectorAll(selector).forEach((el) => el.remove());
+            });
+
+            let cleanText = clone.textContent || "";
+
+            cleanText = cleanText
+                .replace(/\u00a0/g, " ")
+                .replace(/\s+/g, " ")
+                .replace(/\n\s*\n\s*\n/g, "\n\n")
+                .trim();
+
+            console.log(
+                `✓ Extracted ${cleanText.length} chars, ${cleanText.split(/\s+/).length} words`,
+            );
+
+            return cleanText;
+        }
+
+        /**
+         * Calculate estimated reading time
+         */
+        function calculateReadingTime(text) {
+            const wordsPerMinute = 200;
+            const wordCount = text.split(/\s+/).length;
+            const minutes = Math.ceil(wordCount / wordsPerMinute);
+            return minutes;
+        }
+
+        /**
+          Update button UI based on state
+         */
+        function updateUI() {
+            if (isInitializing) {
+                btn.classList.add("loading");
+                btn.classList.remove("playing");
+                // Don't disable - keep button interactive but show loading state
+                btn.disabled = false;
+
+                const spinner = document.createElement("div");
+                spinner.className = "spinner-loader";
+                spinner.id = "playIcon";
+                playIcon.replaceWith(spinner);
+                playIcon = spinner; // Update reference
+
+                label.textContent = "Loading";
+                label.style.display = "";
+                separator.style.display = "";
+                timeDisplay.textContent = "Initializing...";
+            } else if (isPlaying) {
+                btn.classList.remove("loading");
+                btn.classList.add("playing");
+                btn.disabled = false;
+
+                // Ensure we have an SVG element
+                if (playIcon.tagName !== "svg") {
+                    const svg = document.createElementNS(
+                        "http://www.w3.org/2000/svg",
+                        "svg",
+                    );
+                    svg.id = "playIcon";
+                    svg.setAttribute("width", "14");
+                    svg.setAttribute("height", "14");
+                    svg.setAttribute("viewBox", "0 0 14 14");
+                    svg.setAttribute("fill", "none");
+                    playIcon.replaceWith(svg);
+                    playIcon = svg;
+                }
+
+                playIcon.innerHTML = `
+                    <g fill="currentColor">
+                        <rect x="4" y="2" width="2" height="10" rx="1"/>
+                        <rect x="8" y="2" width="2" height="10" rx="1"/>
+                    </g>
+                `;
+                label.style.display = "none";
+                separator.style.display = "none";
+                timeDisplay.textContent = "Playing...";
+            } else if (isPaused) {
+                btn.classList.remove("loading");
+                btn.classList.remove("playing");
+                btn.disabled = false;
+
+                // Ensure we have an SVG element
+                if (playIcon.tagName !== "svg") {
+                    const svg = document.createElementNS(
+                        "http://www.w3.org/2000/svg",
+                        "svg",
+                    );
+                    svg.id = "playIcon";
+                    svg.setAttribute("width", "14");
+                    svg.setAttribute("height", "14");
+                    svg.setAttribute("viewBox", "0 0 14 14");
+                    svg.setAttribute("fill", "none");
+                    playIcon.replaceWith(svg);
+                    playIcon = svg;
+                }
+
+                playIcon.innerHTML = `<path d="M3 2L11 7L3 12V2Z" fill="currentColor"/>`;
+                label.style.display = "none";
+                separator.style.display = "none";
+                timeDisplay.textContent = "Paused";
+            } else {
+                btn.classList.remove("loading");
+                btn.classList.remove("playing");
+                btn.disabled = false;
+
+                // Ensure we have an SVG element
+                if (playIcon.tagName !== "svg") {
+                    const svg = document.createElementNS(
+                        "http://www.w3.org/2000/svg",
+                        "svg",
+                    );
+                    svg.id = "playIcon";
+                    svg.setAttribute("width", "14");
+                    svg.setAttribute("height", "14");
+                    svg.setAttribute("viewBox", "0 0 14 14");
+                    svg.setAttribute("fill", "none");
+                    playIcon.replaceWith(svg);
+                    playIcon = svg;
+                }
+
+                playIcon.innerHTML = `<path d="M3 2L11 7L3 12V2Z" fill="currentColor"/>`;
+                label.textContent = "Listen";
+                label.style.display = "";
+                separator.style.display = "";
+                if (estimatedMinutes > 0) {
+                    const minuteText =
+                        estimatedMinutes === 1 ? "minute" : "minutes";
+                    timeDisplay.textContent = `${estimatedMinutes} ${minuteText}`;
+                } else {
+                    timeDisplay.textContent = "Calculating...";
+                }
+            }
+        }
+
+        function findGoogleUKVoice() {
+            const voices = speechSynthesis.getVoices();
+
+            let voice = voices.find((v) =>
+                v.name.includes("Google UK English Male"),
+            );
+
+            if (!voice) {
+                voice = voices.find(
+                    (v) => v.name.includes("Google") && v.lang === "en-GB",
+                );
+            }
+
+            if (!voice) {
+                voice = voices.find((v) => v.lang === "en-GB");
+            }
+
+            if (!voice) {
+                voice = voices.find((v) => v.lang.startsWith("en"));
+            }
+
+            return voice;
+        }
+
+        /**
+         * Initialize speech synthesis (called on first play only)
+         */
+        function initSpeech() {
+            console.log("→ initSpeech called");
+
+            if (!articleText) {
+                console.error("✗ No article text");
+                timeDisplay.textContent = "No content";
+                return false;
+            }
+
+            utterance = new SpeechSynthesisUtterance(articleText);
+
+            const voice = findGoogleUKVoice();
+            if (voice) {
+                utterance.voice = voice;
+                console.log(`✓ Using voice: ${voice.name}`);
+            }
+
+            utterance.rate = 0.95; //I like this speech rate
+            utterance.pitch = 0.8;
+            utterance.volume = 1.0;
+
+            utterance.onstart = () => {
+                console.log("✓ Speech started");
+                isInitializing = false;
+                isPlaying = true;
+                isFirstPlay = false;
+                updateUI();
+            };
+
+            utterance.onend = () => {
+                console.log("✓ Speech ended");
+                isPlaying = false;
+                isPaused = false;
+                updateUI();
+            };
+
+            utterance.onerror = (event) => {
+                console.error("✗ Speech error:", event.error);
+                isInitializing = false;
+                isPlaying = false;
+                isPaused = false;
+                timeDisplay.textContent = "Error: " + event.error;
+                updateUI();
+            };
+
+            return true;
+        }
+
+        /**
+         * Play speech
+         */
+        function play() {
+            if (isFirstPlay) {
+                isInitializing = true;
+                updateUI();
+
+                if (!initSpeech()) {
+                    isInitializing = false;
+                    updateUI();
+                    return;
+                }
+
+                speechSynthesis.speak(utterance);
+            } else {
+                if (!utterance) return;
+
+                if (isPaused) {
+                    speechSynthesis.resume();
+                    isPlaying = true;
+                    isPaused = false;
+                } else {
+                    speechSynthesis.cancel();
+                    speechSynthesis.speak(utterance);
+                    isPlaying = true;
+                }
+
+                updateUI();
+            }
+        }
+
+        /**
+         * Pause speech
+         */
+        function pause() {
+            speechSynthesis.pause();
+            isPlaying = false;
+            isPaused = true;
+            updateUI();
+        }
+
+        /**
+         * Stop speech completely
+         */
+        function stop() {
+            speechSynthesis.cancel();
+            isPlaying = false;
+            isPaused = false;
+            updateUI();
+        }
+
+        // Button click handler
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation(); // Prevent double-triggering from controls click
+
+            // Block clicks during initialization
+            if (isInitializing) {
+                return;
+            }
+
+            if (isPlaying) {
+                pause();
+            } else {
+                play();
+            }
+        });
+
+        // Make entire controls area clickable (better UX)
+        controls.addEventListener("click", (e) => {
+            // Only trigger if clicking on the text area, not the button
+            if (e.target !== btn && !btn.contains(e.target)) {
+                // Block clicks when disabled OR when initializing!!
+                if (btn.disabled || isInitializing) {
+                    return;
+                }
+
+                if (isPlaying) {
+                    pause();
+                } else {
+                    play();
+                }
+            }
+        });
+
+        // Stop speech when navigating away !!
+        window.addEventListener("beforeunload", () => {
+            stop();
+        });
+
+        /**
+         * Initialize - extract text and calculate time
+         * This must run after DOM is ready
+         */
+        function initialize() {
+            console.log("→ Initializing article reader...");
+
+            articleText = extractArticleText();
+
+            if (!articleText) {
+                console.error("✗ Failed to extract article text");
+                timeDisplay.textContent = "No content found";
+                btn.disabled = true;
+                return;
+            }
+
+            estimatedMinutes = calculateReadingTime(articleText);
+            console.log(`✓ Ready: ${estimatedMinutes} min read`);
+            updateUI();
+        }
+
+        /**
+         * Safe initialization that waits for DOM
+         * run after DOM is fully loaded!!!!! This is key
+         */
+        function safeInitialize() {
+            if (document.readyState === "loading") {
+                // DOM not ready yet, wait for it
+                console.log("⏳ Waiting for DOM...");
+                document.addEventListener("DOMContentLoaded", initialize);
+            } else {
+                // DOM already loaded, initialize immediately
+                console.log("✓ DOM ready, initializing...");
+                initialize();
+            }
+        }
+
+        // Handle voices loading async (some browsers need this ai recommended this)
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = () => {
+                console.log("✓ Voices loaded");
+            };
+        }
+
+        // Start initialization
+        safeInitialize();
+    })();
+</script>
